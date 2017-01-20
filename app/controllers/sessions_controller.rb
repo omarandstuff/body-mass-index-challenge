@@ -27,7 +27,19 @@ class SessionsController < ApplicationController
   end
 
   def logout
+    session = Session.where(token: request.headers[:HTTP_CSRF_TOKEN]).first
 
+    if session
+      session.active = false
+
+      if session.save
+        render json: ''
+      else
+        render json: '', status: :internal_server_error
+      end
+    else
+      render json: '', status: :bad_request
+    end
   end
 
   private

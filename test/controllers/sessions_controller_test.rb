@@ -13,6 +13,11 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "application/json", @response.content_type
   end
 
+  test "should not retrive a session with the wrong credentials" do
+    post login_url, params: { email: "omarandstuff@gmail.com", password: "12345" }, xhr: true
+    assert_response :bad_request
+  end
+
   test "should retrive a session along with a user at login with the right token" do
     post login_url, headers: { "HTTP_CSRF_TOKEN" => "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJjcmVhdGVkX2F0IjoxNDg0ODkzNTgxfQ.NeggLf_R44CEPGGrIi2ZlalAjyWG-AnR0IQi35n0a0s"} , xhr: true
     assert_response :success
@@ -22,6 +27,11 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "davidandstuff@gmail.com", json['user']['email']
     assert_equal "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJjcmVhdGVkX2F0IjoxNDg0ODkzNTgxfQ.NeggLf_R44CEPGGrIi2ZlalAjyWG-AnR0IQi35n0a0s", json['token']
     assert_equal "application/json", @response.content_type
+  end
+
+  test "should not retrive a session with a wrong token" do
+    post login_url, headers: { "HTTP_CSRF_TOKEN" => "token.token.token"} , xhr: true
+    assert_response :bad_request
   end
 
   test "should register with the right credentials and return a user and a session token" do
@@ -40,9 +50,14 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :bad_request
   end
 
-  test "should delete logout" do
-    delete logout_url
+  test "should delete logout with the right token" do
+    delete logout_url, headers: { "HTTP_CSRF_TOKEN" => "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJjcmVhdGVkX2F0IjoxNDg0ODkzNTgxfQ.NeggLf_R44CEPGGrIi2ZlalAjyWG-AnR0IQi35n0a0s"} , xhr: true
     assert_response :success
+  end
+
+  test "should not logout with the wrong token" do
+    delete logout_url, headers: { "HTTP_CSRF_TOKEN" => "token.token.token"} , xhr: true
+    assert_response :bad_request
   end
 
 end
