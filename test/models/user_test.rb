@@ -32,4 +32,16 @@ class UserTest < ActiveSupport::TestCase
     assert user.save
   end
 
+  test "Should respond to mass index records association as records" do
+    user = User.create email: 'omarandstuff@gmail.com', password: '12345678'
+
+    assert user.records
+  end
+
+  test "Should respond to sessions association as records" do
+    user = User.create email: 'omarandstuff@gmail.com', password: '12345678'
+
+    assert user.sessions
+  end
+
 end

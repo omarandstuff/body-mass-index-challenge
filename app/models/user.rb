@@ -1,5 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
+  has_many :records, class_name: 'MassIndexRecord', dependent: :destroy
+  has_many :sessions, dependent: :destroy
 
   validates :email, presence: true
   validates :email, uniqueness: true
