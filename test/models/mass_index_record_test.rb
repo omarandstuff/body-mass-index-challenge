@@ -18,6 +18,12 @@ class MassIndexRecordTest < ActiveSupport::TestCase
     assert record.errors.messages[:user]
   end
 
+  test "Should save with the right body mass index and user" do
+    user = User.create email: 'omarandstuff@gmail.com', password: '12345678'
+    record = MassIndexRecord.new body_mass_index: 666, user: user
+    assert record.save
+  end
+
   test "Should respond to user association" do
     user = User.create email: 'omarandstuff@gmail.com', password: '12345678'
     record = MassIndexRecord.create body_mass_index: 666, user: user

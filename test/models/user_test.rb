@@ -27,7 +27,7 @@ class UserTest < ActiveSupport::TestCase
     assert user.errors.messages[:email]
   end
 
-  test "showld save user with the correct credentials" do
+  test "showld save user with the right credentials" do
     user = User.new email: 'omarandstuff@gmail.com', password: '12345678'
     assert user.save
   end

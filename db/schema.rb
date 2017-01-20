@@ -24,11 +24,12 @@ ActiveRecord::Schema.define(version: 20170120023100) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.string   "token",                      null: false
-    t.boolean  "active",     default: false, null: false
+    t.string   "token"
+    t.boolean  "active",     default: true, null: false
     t.integer  "user_id"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.index ["token"], name: "index_sessions_on_token", unique: true, using: :btree
     t.index ["user_id"], name: "index_sessions_on_user_id", using: :btree
   end
 
