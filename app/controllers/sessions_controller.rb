@@ -1,6 +1,13 @@
 class SessionsController < ApplicationController
 
   def login
+    session = retrieve_session email: params[:email], password: params[:password], token: request.headers[:HTTP_CSRF_TOKEN]
+
+    if session && session.errors.empty?
+      render json: { user: session.user, token: session.token }
+    else
+      render json: { error: "Can't login"}, status: :bad_request
+    end
   end
 
   def register
@@ -12,6 +19,7 @@ class SessionsController < ApplicationController
       if session && session.errors.empty?
         render json: { user: user, token: user.sessions.first.token }
       else
+        render json: '', status: :internal_server_error
       end
     else
       render json: { error: user.errors }, status: :bad_request
@@ -30,30 +38,20 @@ class SessionsController < ApplicationController
     def retrieve_session(token:, email:, password:)
       # Maybe the session already exists
       if token
-        # JWT trhows a exeption if it can't decode the token
-        begin
-          decoded_token = JWT.decode token, Rails.application.secrets.secret_key_base, true, { :algorithm => 'HS256' }
-        rescue JWT::DecodeError
-          decoded_token = nil
-        end
+        session = Session.find_by_token(token)
 
-        # The token was successfully decoded, let's find a session
-        if decoded_token
-          session = Session.find_by_token(token)
+        # The session exists, if it isn't active, it has to be owned by the user with the same email
+        # as the suplied to be reactivated
+        if session && (session.active || session.user.email == email)
+          authorized = session.active || session.user.authenticate(password)
 
-          # The session exists, if it isn't active, it has to be owned by the user with the same email
-          # as the suplied to be reactivated
-          if session && (session.active || session.user.email == email)
-            authorized = session.active || session.user.authenticate(password)
-
-            if authorized && !session.active
-              session.active = true
-              session.save
-              return session
-            end
-
-            return authorized ? session : nil
+          if authorized && !session.active
+            session.active = true
+            session.save
+            return session
           end
+
+          return authorized ? session : nil
         end
       end
 
