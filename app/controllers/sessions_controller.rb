@@ -44,7 +44,7 @@ class SessionsController < ApplicationController
 
   private
     def user_params
-      params.require(:user).permit(:email, :password)
+      params.require(:user).permit(:email, :firstname, :lastname, :password)
     end
 
     def retrieve_session(token:, email:, password:)
