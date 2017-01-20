@@ -6,7 +6,5 @@ class CreateMassIndexRecords < ActiveRecord::Migration[5.0]
 
       t.timestamps null: false
     end
-
-    add_index :mass_index_records, :user_id
   end
 end
