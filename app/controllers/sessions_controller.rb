@@ -75,16 +75,10 @@ class SessionsController < ApplicationController
         return nil
       end
 
-      new_token = generate_token user
+      new_token = Sessions::GenerateToken.new(user.id, Time.now).process
 
       session = Session.new token: new_token, user: user
       session.save
       return session
-    end
-
-    def generate_token(user)
-      payload = { user_id: user.id, created_at: Time.now.to_i }
-
-      return JWT.encode payload, Rails.application.secrets.secret_key_base, 'HS256'
     end
 end
