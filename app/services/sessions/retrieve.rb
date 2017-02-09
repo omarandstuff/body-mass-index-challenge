@@ -1,5 +1,7 @@
 module Sessions
   class Retrieve
+    extend ProcessWraper
+
     attr_reader :token, :email, :password
 
     def initialize(token: nil, email: nil, password: nil)

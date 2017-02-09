@@ -1,8 +1,10 @@
 module Sessions
   class GenerateToken
+    extend ProcessWraper
+
     attr_reader :id, :created_at
 
-    def initialize(id, created_at)
+    def initialize(id:, created_at:)
       @id, @created_at = id, created_at
     end
 

@@ -1,12 +1,22 @@
 require 'rails_helper'
 
 describe Sessions::Create do
-  describe 'process' do
+  it 'respond to ProcessWraper' do
+    user = FactoryGirl.create(:david)
+    token = Sessions::GenerateToken.new(id: user.id, created_at: Time.now).process
+
+    generated_session = Sessions::Create.for(email: user.email, password: user.password)
+
+    expect(generated_session).to_not eq nil
+    expect(Session.last).to be_active
+  end
+
+  describe '#process' do
 
     context 'When the right credentials are given' do
       it 'returns a new active session object' do
         user = FactoryGirl.create(:david)
-        token = Sessions::GenerateToken.new(user.id, Time.now).process
+        token = Sessions::GenerateToken.new(id: user.id, created_at: Time.now).process
 
         service = Sessions::Create.new(email: user.email, password: user.password)
 
