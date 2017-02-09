@@ -7,10 +7,11 @@ module Sessions
     end
 
     def process
-      if session.present?
-        get_session
-      else
-        create_session
+      return session if session and session.active?
+
+      if user and session and session.user == user and user.authenticate(password)
+        session.activate!
+        session
       end
     end
 
@@ -24,22 +25,5 @@ module Sessions
       @session ||= Session.find_by_token(token)
     end
 
-    def get_session
-      return session if session.active?
-      
-      if user and session.user == user and user.authenticate(password)
-        session.activate!
-        session
-      end
-    end
-
-    def create_session
-      user = User.find_by_email(email)
-
-      if user && user.authenticate(password)
-        new_token = Sessions::GenerateToken.new(user.id, Time.now).process
-        Session.create! token: new_token, user: user
-      end
-    end
   end
 end

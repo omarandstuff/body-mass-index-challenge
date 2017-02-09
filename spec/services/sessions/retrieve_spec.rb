@@ -80,14 +80,13 @@ describe Sessions::Retrieve do
       end
 
       context 'and the right credentials are given' do
-        it 'returns a new active session' do
+        it 'returns nil' do
           user = FactoryGirl.create(:david)
           token = Sessions::GenerateToken.new(user.id, Time.now).process
 
           service = Sessions::Retrieve.new(email: user.email, password: user.password, token: 'erratic token')
 
-          expect{ service.process }.to change(Session, :count).by(1)
-          expect(Session.last).to be_active
+          expect(service.process).to eq nil
         end
       end
 
@@ -102,14 +101,13 @@ describe Sessions::Retrieve do
 
     context 'when there is no token' do
       context 'and the right credentials are given' do
-        it 'returns a new active session' do
+        it 'returns nil' do
           user = FactoryGirl.create(:david)
           token = Sessions::GenerateToken.new(user.id, Time.now).process
 
           service = Sessions::Retrieve.new(email: user.email, password: user.password)
 
-          expect{ service.process }.to change(Session, :count).by(1)
-          expect(Session.last).to be_active
+          expect(service.process).to eq nil
         end
       end
 
