@@ -1,14 +1,20 @@
 require 'rails_helper'
 
 describe Sessions::ProcessWraper do
-  let(:dummy_service) { Class.new { extend Sessions::ProcessWraper
-                                    def initialize(**args)end
-                                    define_method(:process) { "process_executed"} }}
+  let(:dummy_service) do 
+    Class.new do
+      extend Sessions::ProcessWraper
+      
+      def initialize(a,b)
+      end
+      
+      define_method(:process) { "process_executed" } 
+    end
+  end
 
   describe '.for' do
     it 'returns the result of the instance method process' do
-      trivial_arguments = { arg1: 1, arg2: 2 }
-      result = dummy_service.for **trivial_arguments
+      result = dummy_service.for(1,2)
 
       expect(result).to eq "process_executed"
     end

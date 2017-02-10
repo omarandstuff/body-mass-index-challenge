@@ -1,7 +1,7 @@
 module Sessions
   module ProcessWraper
-    def for(**args)
-      self.new(**args).process
+    def for(*args)
+      self.new(*args).process
     end
   end
 end
