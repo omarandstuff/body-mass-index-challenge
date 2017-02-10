@@ -6,7 +6,7 @@ class SessionsController < ApplicationController
     if session && session.errors.empty?
       render json: { user: session.user, token: session.token }
     else
-      render json: { error: "Can't login"}, status: :bad_request
+      head :bad_request
     end
   end
 
@@ -19,7 +19,7 @@ class SessionsController < ApplicationController
       if session && session.errors.empty?
         render json: { user: user, token: user.sessions.first.token }
       else
-        render json: '', status: :internal_server_error
+        head :internal_server_error
       end
     else
       render json: { error: user.errors }, status: :bad_request
@@ -33,12 +33,12 @@ class SessionsController < ApplicationController
       session.active = false
 
       if session.save
-        render json: ''
+        head :ok
       else
-        render json: '', status: :internal_server_error
+        head :internal_server_error
       end
     else
-      render json: '', status: :bad_request
+      head :bad_request
     end
   end
 
