@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
 
   def login
-    session = Sessions::Retrieve.new(email: params[:email], password: params[:password], token: request.headers[:HTTP_CSRF_TOKEN]).process
+    session = retrieve_session || create_session
 
     if session && session.errors.empty?
       render json: { user: session.user, token: session.token }
@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
     user = User.new user_params
 
     if user.save
-      session = Sessions::Retrieve.new(email: user.email, password: user.password, token: nil).process
+      session = Sessions::Create.for(email: user.email, password: user.password)
 
       if session && session.errors.empty?
         render json: { user: user, token: user.sessions.first.token }
@@ -45,5 +45,20 @@ class SessionsController < ApplicationController
   private
     def user_params
       params.require(:user).permit(:email, :firstname, :lastname, :password)
+    end
+
+    def retrieve_session
+      Sessions::Retrieve.for(
+        email: params[:email], 
+        password: params[:password], 
+        token: request.headers[:HTTP_CSRF_TOKEN]
+      )
+    end
+
+    def create_session
+      Sessions::Create.for(
+        email: params[:email],
+        password: params[:password]
+      )
     end
 end

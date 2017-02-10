@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-describe Sessions::ProcessWraper do
+describe ProcessWraper do
   let(:dummy_service) do 
     Class.new do
-      extend Sessions::ProcessWraper
+      extend ProcessWraper
       
       def initialize(a,b)
       end
